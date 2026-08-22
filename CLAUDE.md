@@ -5,8 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - `npm run dev` / `ng serve --configuration development` — start dev server at `http://localhost:4200/`
+- `npm run dev:local` / `ng serve --configuration local` — dev server using `src/environments/env.local.ts` (gitignored, for a real local API key)
 - `npm run build` — production build (default config), output to `dist/`
-- `npm run build:dev` / `npm run build:prod` — explicit configuration builds
+- `npm run build:dev` / `npm run build:prod` / `npm run build:local` — explicit configuration builds
 - `npm run watch` — dev build with `--watch`
 - `npm run lint` / `ng lint` — ESLint (flat config, `eslint.config.js`); lint a subset with `ng lint --lint-file-patterns 'src/app/pages/**/*.ts'`
 - `npm run format` / `npm run format:check` — Prettier over `src/**/*.{ts,html,scss}`

@@ -325,7 +325,7 @@ flowchart TD
 
 `src/environments/env.dev.ts` (used by `npm run dev`) ships with `geminiApiKey: ''` and **must never have a real key committed into it** — it's a tracked file.
 
-For local testing, put a real key in `src/environments/env.local.ts` instead — that file is listed in `.gitignore` (`/src/environments/env.local.ts`) specifically so a real key never risks being committed. Note that as of this writing `env.local.ts` is not wired into any Angular build configuration (`angular.json`'s `fileReplacements` only swap in `env.dev.ts`/`env.production.ts`) — using it today means manually pointing `getClient()`'s `environment` import at it, or adding a `local` build configuration that replaces `env.ts` with it, before it will actually take effect.
+For local testing, put a real key in `src/environments/env.local.ts` instead — that file is listed in `.gitignore` (`/src/environments/env.local.ts`) specifically so a real key never risks being committed. It's wired into a dedicated `local` build/serve configuration in `angular.json` (`fileReplacements` swaps `env.ts` → `env.local.ts`) — run `npm run dev:local` (or `npm run build:local`) to pick it up.
 
 ---
 
