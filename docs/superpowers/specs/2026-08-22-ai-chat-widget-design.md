@@ -10,6 +10,8 @@ Add a floating AI chat widget, backed by Google's Gemini API via the `@google/ge
 - Multi-turn conversation with Gemini, streamed token-by-token into the panel.
 - Conversation history persists across reloads/navigation via `localStorage`.
 - Fully theme-aware (light/dark) and translated (EN/BN), consistent with existing conventions.
+- Async orchestration (calling Gemini, handling streaming/success/failure) implemented directly in the widget component/service, without introducing `@ngrx/effects`.
+- A single ongoing conversation, with a "New chat" action that resets it — no multi-conversation management.
 
 ## Non-goals
 
