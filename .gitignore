@@ -37,6 +37,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Environment overrides
+/src/environments/env.local.ts
+
 # System files
 .DS_Store
 Thumbs.db

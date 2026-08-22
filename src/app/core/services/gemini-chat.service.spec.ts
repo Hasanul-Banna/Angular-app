@@ -20,7 +20,8 @@ describe('GeminiChatService', () => {
   });
 
   function withFakeClient(client: FakeClient): void {
-    (service as unknown as { getClient: () => FakeClient }).getClient = () => client;
+    (service as unknown as { getClient: () => Promise<FakeClient> }).getClient = () =>
+      Promise.resolve(client);
   }
 
   function fakeStreamingClient(chunks: string[]): FakeClient {

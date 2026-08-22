@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { type Subscription } from 'rxjs';
 import {
   AiChatActions,
   type ChatMessage,
@@ -31,6 +32,8 @@ export class AiChatWidget {
   readonly isOpen = signal(false);
   readonly draftMessage = signal('');
   readonly streamingText = signal('');
+
+  private streamSubscription: Subscription | null = null;
 
   readonly messages = this.store.selectSignal(selectAiChatMessages);
   readonly status = this.store.selectSignal(selectAiChatStatus);
@@ -71,6 +74,8 @@ export class AiChatWidget {
   }
 
   clearConversation(): void {
+    this.streamSubscription?.unsubscribe();
+    this.streamSubscription = null;
     this.store.dispatch(AiChatActions.clearConversation());
     this.streamingText.set('');
   }
@@ -78,7 +83,8 @@ export class AiChatWidget {
   private runStream(): void {
     this.streamingText.set('');
 
-    this.geminiChatService.streamReply(this.messages()).subscribe({
+    this.streamSubscription?.unsubscribe();
+    this.streamSubscription = this.geminiChatService.streamReply(this.messages()).subscribe({
       next: (accumulatedText) => this.streamingText.set(accumulatedText),
       error: (err: unknown) => {
         this.streamingText.set('');
@@ -101,6 +107,8 @@ export class AiChatWidget {
               },
             })
           );
+        } else {
+          this.store.dispatch(AiChatActions.receiveMessageFailure({ error: 'unknown' }));
         }
       },
     });

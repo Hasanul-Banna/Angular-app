@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { GoogleGenAI } from '@google/genai';
 import { Observable, type Subscriber } from 'rxjs';
 
 import { environment } from '../../../environments/env';
@@ -47,7 +46,7 @@ export class GeminiChatService {
     subscriber: Subscriber<string>
   ): Promise<void> {
     try {
-      const client = this.getClient();
+      const client = await this.getClient();
       const contents = history.map((message) => ({
         role: message.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: message.content }],
@@ -71,12 +70,15 @@ export class GeminiChatService {
     }
   }
 
-  private getClient(): GeminiClient {
+  private async getClient(): Promise<GeminiClient> {
     if (!environment.geminiApiKey) {
       throw new GeminiChatError('missingKey', 'Gemini API key is not configured.');
     }
 
-    this.client ??= new GoogleGenAI({ apiKey: environment.geminiApiKey });
+    if (!this.client) {
+      const { GoogleGenAI } = await import('@google/genai');
+      this.client = new GoogleGenAI({ apiKey: environment.geminiApiKey });
+    }
 
     return this.client;
   }

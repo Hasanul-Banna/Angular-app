@@ -61,7 +61,11 @@ function persistMessages(messages: ChatMessage[]): void {
     return;
   }
 
-  window.localStorage.setItem(AI_CHAT_STORAGE_KEY, JSON.stringify(messages));
+  try {
+    window.localStorage.setItem(AI_CHAT_STORAGE_KEY, JSON.stringify(messages));
+  } catch {
+    // Persistence is best-effort; ignore storage failures (quota, private mode, etc.).
+  }
 }
 
 function supportsBrowserStorage(): boolean {
