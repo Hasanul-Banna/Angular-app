@@ -51,7 +51,7 @@ This is an Angular 21 standalone-component app (no NgModules) with SSR enabled v
 - `modules/` — **legacy**: `modules/auth/{login,sign-up}` and `modules/landing/landing-page` are no longer referenced by `app.routes.ts`. Add new screens under `pages/`, not here.
 - `shared/components/` — reusable standalone components (`theme-switcher`, `lang-switcher`).
 - `theme/` — SCSS design tokens (`color_variables.scss`) and Material theme setup (`_theme.scss`).
-- `specs/` — architecture/spec docs in Markdown (`lang-switcher.md`, `theming.md`, `theme-switcher.md`). Read the relevant one before touching i18n or theming.
+- `specs/` — architecture/spec docs in Markdown (`lang-switcher.md`, `theming.md`, `theme-switcher.md`, `ai-chat-widget.md`). Read the relevant one before touching i18n, theming, or the AI chat widget.
 - `shared/directives|models|pipes|services|types`, `ui-kits/`, `utils/` — currently empty, reserved for growth.
 - `design-flow/` (repo root) — SVG diagrams of the Angular ecosystem and the Tailwind/Material integration flow.
 
