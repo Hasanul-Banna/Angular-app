@@ -38,7 +38,7 @@ Enforced as errors, so write new code this way from the start:
 
 ## Architecture
 
-This is an Angular 21 standalone-component app (no NgModules) with SSR enabled via `@angular/ssr`, using NgRx for global state and `@ngx-translate/core` for i18n. Styling is a hybrid of SCSS design tokens, Angular Material (M2 API), and Tailwind CSS v4.
+This is an Angular LT standalone-component app (no NgModules) with SSR enabled via `@angular/ssr`, using NgRx for global state and `@ngx-translate/core` for i18n. Styling is a hybrid of SCSS design tokens, Angular Material (M2 API), and Tailwind CSS v4.
 
 ### Path alias
 

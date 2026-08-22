@@ -6,7 +6,7 @@
 
 **Architecture:** A new NgRx feature (`aiChat`) holds finished messages + status, following the exact same models/actions/reducer/selectors + meta-reducer pattern as the existing `appLanguage` feature. A `GeminiChatService` wraps `@google/genai`, called only in the browser, and streams accumulated text back as an `Observable<string>`. A standalone `AiChatWidget` component (mounted once in `app.html`) owns the UI and the async orchestration — dispatching store actions directly, no `@ngrx/effects`.
 
-**Tech Stack:** Angular 21 standalone components, NgRx `@ngrx/store` (no `@ngrx/effects`), `@google/genai`, Angular Material (button/icon) + Tailwind CSS v4, `@ngx-translate/core`.
+**Tech Stack:** Angular LT standalone components, NgRx `@ngrx/store` (no `@ngrx/effects`), `@google/genai`, Angular Material (button/icon) + Tailwind CSS v4, `@ngx-translate/core`.
 
 **Design doc:** `docs/superpowers/specs/2026-08-22-ai-chat-widget-design.md`
 
@@ -489,7 +489,7 @@ export const environment: AppEnvironment = {
 	baseUrl: 'http://localhost:4200',
 	apiBaseUrl: 'http://localhost:3000/api',
 	authBaseUrl: 'http://localhost:3000/auth',
-	appName: 'Angular 21 App',
+	appName: 'Angular LT App',
 	defaultLanguage: 'en',
 	enableDebugTools: true,
 	geminiApiKey: '',
@@ -506,7 +506,7 @@ export const environment: AppEnvironment = {
 	baseUrl: 'http://localhost:4200',
 	apiBaseUrl: 'http://localhost:3000/api',
 	authBaseUrl: 'http://localhost:3000/auth',
-	appName: 'Angular 21 App (Dev)',
+	appName: 'Angular LT App (Dev)',
 	defaultLanguage: 'en',
 	enableDebugTools: true,
 	geminiApiKey: '',
@@ -523,7 +523,7 @@ export const environment: AppEnvironment = {
 	baseUrl: 'https://app.example.com',
 	apiBaseUrl: 'https://api.example.com',
 	authBaseUrl: 'https://auth.example.com',
-	appName: 'Angular 21 App',
+	appName: 'Angular LT App',
 	defaultLanguage: 'en',
 	enableDebugTools: false,
 	geminiApiKey: '',
