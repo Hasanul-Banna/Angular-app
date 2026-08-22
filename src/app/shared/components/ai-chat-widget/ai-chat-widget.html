@@ -1,7 +1,9 @@
 <div class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
   @if (isOpen()) {
     <div
-      class="flex h-[28rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_18px_48px_color-mix(in_srgb,var(--color-dark)_24%,transparent)]"
+      class="flex h-[28rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl
+        border border-[var(--color-border)] bg-[var(--color-surface)]
+        shadow-[0_18px_48px_color-mix(in_srgb,var(--color-dark)_24%,transparent)]"
     >
       <header class="flex items-center justify-between gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-3">
         <h2 class="text-sm font-semibold text-[var(--color-on-surface)]">{{ 'aiChat.panelTitle' | translate }}</h2>
