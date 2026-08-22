@@ -530,7 +530,7 @@ export const environment: AppEnvironment = {
 };
 ```
 
-After this step, set your real key locally in `src/environments/env.dev.ts` (the file used by `npm run dev`) to actually talk to Gemini — do not commit a real key.
+After this step, set your real key locally in `src/environments/env.local.ts` (gitignored — safe to put a real key there) and update `getClient()`'s key source if you want local dev to use it, or continue using `src/environments/env.dev.ts` but never commit a real value into it.
 
 - [ ] **Step 4: Write the failing service test — create `gemini-chat.service.spec.ts`**
 
