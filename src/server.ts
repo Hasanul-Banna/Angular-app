@@ -25,7 +25,21 @@ const angularApp = new AngularNodeAppEngine();
  */
 
 /**
- * Serve static files from /browser
+ * Serve i18n translation files without long-term caching: unlike hashed
+ * build assets, these keep the same URL when their content changes, so a
+ * long max-age would make browsers keep showing stale/untranslated text.
+ */
+app.use(
+  '/i18n',
+  express.static(join(browserDistFolder, 'i18n'), {
+    maxAge: 0,
+    index: false,
+    redirect: false,
+  }),
+);
+
+/**
+ * Serve remaining static files from /browser
  */
 app.use(
   express.static(browserDistFolder, {

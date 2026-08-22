@@ -157,7 +157,7 @@ class GeminiChatError extends Error {
 
 ### 6.5 Model
 
-Fixed to `gemini-2.5-flash` (`GEMINI_MODEL` constant) — there is no model picker or configuration for this.
+Fixed to `gemini-3.6-flash` (`GEMINI_MODEL` constant) — there is no model picker or configuration for this.
 
 ---
 
@@ -308,7 +308,7 @@ flowchart TD
 - **No cancellation of the underlying Gemini request.** Unsubscribing stops the widget from acting on further chunks, but does not send an abort signal — the network request keeps running to completion in the background (see the "New chat mid-stream" edge case above).
 - **No automated interactive-browser test coverage.** Only the NgRx reducer and `GeminiChatService` (with a mocked client) have unit specs. There is no E2E/integration test that actually opens the panel, sends a message, and asserts on rendered DOM — that verification has so far been manual/visual only.
 - **No streaming request retry/backoff.** A network blip mid-stream surfaces as a `network` error with a manual Retry button; there's no automatic reconnect.
-- **No configurable model or generation parameters.** The model (`gemini-2.5-flash`) is a hardcoded constant; there's no UI or config for temperature, max tokens, system instructions, etc.
+- **No configurable model or generation parameters.** The model (`gemini-3.6-flash`) is a hardcoded constant; there's no UI or config for temperature, max tokens, system instructions, etc.
 
 ---
 
