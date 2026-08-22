@@ -1,0 +1,54 @@
+<section>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight">{{ 'USER_MANAGEMENT_TITLE' | translate }}</h2>
+      <p class="mt-2 text-sm text-[var(--color-on-surface-muted)]">{{ 'USER_MANAGEMENT_SUBTITLE' | translate }}</p>
+    </div>
+    <button mat-flat-button type="button" class="!rounded-lg !bg-[var(--color-primary)] !text-white">
+      {{ 'USER_MANAGEMENT_ADD_USER' | translate }}
+    </button>
+  </div>
+
+  <div class="mt-6 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-left text-sm">
+        <thead class="bg-[color-mix(in_srgb,var(--color-gray-light)_40%,transparent)] text-[var(--color-on-surface-muted)]">
+          <tr>
+            <th class="px-4 py-3 font-medium">{{ 'USER_MANAGEMENT_TABLE_NAME' | translate }}</th>
+            <th class="px-4 py-3 font-medium">{{ 'USER_MANAGEMENT_TABLE_EMAIL' | translate }}</th>
+            <th class="px-4 py-3 font-medium">{{ 'USER_MANAGEMENT_TABLE_ROLE' | translate }}</th>
+            <th class="px-4 py-3 font-medium">{{ 'USER_MANAGEMENT_TABLE_STATUS' | translate }}</th>
+            <th class="px-4 py-3 font-medium">{{ 'USER_MANAGEMENT_TABLE_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.email) {
+            <tr class="border-t border-[var(--color-border)]">
+              <td class="px-4 py-3 font-medium">{{ user.name }}</td>
+              <td class="px-4 py-3 text-[var(--color-on-surface-muted)]">{{ user.email }}</td>
+              <td class="px-4 py-3">{{ user.role }}</td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-2.5 py-1 text-xs font-medium"
+                  [class.bg-[color-mix(in_srgb,var(--color-success)_20%,transparent)]]="user.status === 'Active'"
+                  [class.text-[var(--color-success)]]="user.status === 'Active'"
+                  [class.bg-[color-mix(in_srgb,var(--color-warning)_20%,transparent)]]="user.status === 'Pending'"
+                  [class.text-[var(--color-warning)]]="user.status === 'Pending'"
+                  [class.bg-[color-mix(in_srgb,var(--color-error)_20%,transparent)]]="user.status === 'Suspended'"
+                  [class.text-[var(--color-error)]]="user.status === 'Suspended'"
+                >
+                  {{ user.status }}
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex flex-wrap gap-2">
+                  <button mat-stroked-button type="button" class="!rounded-md !text-xs">{{ 'USER_MANAGEMENT_EDIT' | translate }}</button>
+                  <button mat-stroked-button type="button" class="!rounded-md !text-xs !text-[var(--color-error)] !border-[var(--color-error)]/40">{{ 'USER_MANAGEMENT_DISABLE' | translate }}</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

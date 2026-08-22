@@ -1,0 +1,16 @@
+{
+  "language": {
+    "label": "Language",
+    "selected": "selected"
+  },
+  "theme": {
+    "appearance": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "dashboard": {
+    "revenue": "Revenue",
+    "viewDetails": "View details"
+  }
+}

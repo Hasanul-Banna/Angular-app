@@ -1,0 +1,91 @@
+<div class="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+  <div class="relative flex min-h-screen">
+    @if (mobileSidebarOpen()) {
+      <button
+        type="button"
+        class="fixed inset-0 z-20 bg-black/35 lg:hidden"
+        [attr.aria-label]="'DASHBOARD_LAYOUT_CLOSE_SIDEBAR' | translate"
+        (click)="closeMobileSidebar()"
+      ></button>
+    }
+
+    <aside
+      class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-transform duration-200 lg:static lg:translate-x-0"
+      [class.-translate-x-full]="!mobileSidebarOpen()"
+      [class.lg:w-24]="sidebarCollapsed()"
+      [class.lg:w-72]="!sidebarCollapsed()"
+    >
+      <div class="mb-6 flex items-center justify-between gap-2">
+        <a routerLink="/dashboard" class="flex items-center gap-2 text-lg font-bold">
+          <span class="inline-flex size-8 items-center justify-center rounded-lg bg-[var(--color-primary)] text-white">A</span>
+          @if (!sidebarCollapsed()) {
+            <span>{{ 'DASHBOARD_LAYOUT_BRAND' | translate }}</span>
+          }
+        </a>
+        <button mat-icon-button type="button" class="hidden lg:!inline-flex" (click)="toggleSidebarCollapsed()" [attr.aria-label]="'DASHBOARD_LAYOUT_TOGGLE_SIDEBAR' | translate">
+          <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+        </button>
+      </div>
+
+      <nav class="flex flex-1 flex-col gap-1">
+        <a
+          routerLink="/dashboard"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-muted)] transition-colors hover:bg-[var(--color-gray-light)]/30"
+          (click)="closeMobileSidebar()"
+        >
+          <mat-icon class="text-base">dashboard</mat-icon>
+          @if (!sidebarCollapsed()) {
+            <span>{{ 'DASHBOARD_LAYOUT_NAV_DASHBOARD' | translate }}</span>
+          }
+        </a>
+
+        <a
+          routerLink="/dashboard/users"
+          routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-muted)] transition-colors hover:bg-[var(--color-gray-light)]/30"
+          (click)="closeMobileSidebar()"
+        >
+          <mat-icon class="text-base">group</mat-icon>
+          @if (!sidebarCollapsed()) {
+            <span>{{ 'DASHBOARD_LAYOUT_NAV_USERS' | translate }}</span>
+          }
+        </a>
+      </nav>
+
+      <a
+        routerLink="/"
+        class="mt-6 rounded-lg border border-[var(--color-border)] px-3 py-2 text-center text-sm text-[var(--color-on-surface-muted)] transition-colors hover:bg-[var(--color-gray-light)]/30"
+        (click)="closeMobileSidebar()"
+      >
+        {{ 'DASHBOARD_LAYOUT_BACK_TO_SITE' | translate }}
+      </a>
+    </aside>
+
+    <div class="flex min-h-screen flex-1 flex-col lg:min-w-0">
+      <header class="sticky top-0 z-10 border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-elevated)_90%,transparent)] px-4 py-3 backdrop-blur-md sm:px-6">
+        <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button mat-icon-button type="button" class="lg:!hidden" [attr.aria-label]="'DASHBOARD_LAYOUT_OPEN_SIDEBAR' | translate" (click)="toggleMobileSidebar()">
+              <mat-icon>menu</mat-icon>
+            </button>
+            <h1 class="text-base font-semibold sm:text-lg">{{ 'DASHBOARD_LAYOUT_TITLE' | translate }}</h1>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <app-lang-switcher class="order-2 sm:order-1" />
+            <app-theme-switcher class="order-1 sm:order-2" />
+            <button mat-flat-button type="button" class="!hidden sm:!inline-flex !rounded-lg !bg-[var(--color-primary)] !text-white">
+              {{ 'DASHBOARD_LAYOUT_NEW_USER' | translate }}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="relative min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)]">
+  <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,color-mix(in_srgb,var(--color-primary)_16%,transparent),transparent_45%),radial-gradient(circle_at_80%_0%,color-mix(in_srgb,var(--color-info)_20%,transparent),transparent_42%)]"></div>
+
+  <header class="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-elevated)_88%,transparent)] backdrop-blur-lg">
+    <nav class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <a routerLink="/" class="flex items-center gap-2 text-lg font-bold tracking-tight">
+        <span class="inline-flex size-8 items-center justify-center rounded-lg bg-[var(--color-primary)] text-white">A</span>
+        <span>{{ 'PUBLIC_LAYOUT_BRAND' | translate }}</span>
+      </a>
+
+      <div class="hidden items-center gap-6 md:flex">
+        <a routerLink="/" routerLinkActive="text-[var(--color-primary)]" [routerLinkActiveOptions]="{ exact: true }" class="text-sm font-medium text-[var(--color-on-surface-muted)] transition-colors hover:text-[var(--color-on-surface)]">
+          {{ 'NAV_HOME' | translate }}
+        </a>
+        <a routerLink="/about" routerLinkActive="text-[var(--color-primary)]" class="text-sm font-medium text-[var(--color-on-surface-muted)] transition-colors hover:text-[var(--color-on-surface)]">
+          {{ 'NAV_ABOUT' | translate }}
+        </a>
+        <a routerLink="/login" routerLinkActive="text-[var(--color-primary)]" class="text-sm font-medium text-[var(--color-on-surface-muted)] transition-colors hover:text-[var(--color-on-surface)]">
+          {{ 'NAV_LOGIN' | translate }}
+        </a>
+      </div>
+
+      <div class="hidden items-center gap-2 md:flex">
+        <app-lang-switcher />
+        <app-theme-switcher />
+        <a mat-flat-button routerLink="/sign-up" class="!rounded-lg !bg-[var(--color-primary)] !px-4 !text-white">
+          {{ 'NAV_GET_STARTED' | translate }}
+        </a>
+      </div>
+
+      <button
+        mat-icon-button
+        type="button"
+        class="md:!hidden"
+        [attr.aria-label]="'NAV_MOBILE_MENU' | translate"
+        (click)="toggleMenu()"
+      >
+        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </nav>
+
+    @if (mobileMenuOpen()) {
+      <div class="border-t border-[var(--color-border)] px-4 py-3 md:hidden">
+        <div class="flex flex-col gap-2">
+          <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]" class="rounded-md px-3 py-2 text-sm text-[var(--color-on-surface-muted)]" (click)="closeMenu()">
+            {{ 'NAV_HOME' | translate }}
+          </a>
+          <a routerLink="/about" routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]" class="rounded-md px-3 py-2 text-sm text-[var(--color-on-surface-muted)]" (click)="closeMenu()">
+            {{ 'NAV_ABOUT' | translate }}
+          </a>
+          <a routerLink="/login" routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]" class="rounded-md px-3 py-2 text-sm text-[var(--color-on-surface-muted)]" (click)="closeMenu()">
+            {{ 'NAV_LOGIN' | translate }}
+          </a>
+          <a routerLink="/sign-up" routerLinkActive="bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]" class="rounded-md px-3 py-2 text-sm text-[var(--color-on-surface-muted)]" (click)="closeMenu()">
+            {{ 'NAV_SIGN_UP' | translate }}
+          </a>
+        </div>
+        <div class="mt-4 flex items-center justify-between border-t border-[var(--color-border)] pt-3">
+          <app-theme-switcher />
+          <app-lang-switcher />
+        </div>
+      </div>
+    }
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+
+  <footer class="mt-16 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <p class="text-sm text-[var(--color-on-surface-muted)]">{{ 'FOOTER_COPYRIGHT' | translate }}</p>
+      <div class="flex gap-4 text-sm text-[var(--color-on-surface-muted)]">
+        <a routerLink="/about" class="transition-colors hover:text-[var(--color-on-surface)]">{{ 'FOOTER_ABOUT' | translate }}</a>
+        <a routerLink="/login" class="transition-colors hover:text-[var(--color-on-surface)]">{{ 'FOOTER_LOGIN' | translate }}</a>
+        <a routerLink="/forgot-password" class="transition-colors hover:text-[var(--color-on-surface)]">{{ 'FOOTER_FORGOT_PASSWORD' | translate }}</a>
+      </div>
+    </div>
+  </footer>
+</div>

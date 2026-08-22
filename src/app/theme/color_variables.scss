@@ -1,0 +1,37 @@
+@use "sass:map";
+
+$brand-colors: (
+	"primary": #6366f1,
+	"primary-dark": #4f46e5,
+	"secondary": #f59e0b,
+	"success": #10b981,
+	"error": #ef4444,
+	"warning": #f59e0b,
+	"info": #0ea5e9,
+) !default;
+
+$light-theme-colors: (
+	"background": #f8fafc,
+	"surface": #ffffff,
+	"surface-elevated": #ffffff,
+	"on-surface": #111827,
+	"on-surface-muted": #4b5563,
+	"border": #e5e7eb,
+	"gray": #6b7280,
+	"gray-light": #ededed,
+	"dark": #272727,
+) !default;
+
+$dark-theme-colors: (
+	"background": #0b1220,
+	"surface": #111827,
+	"surface-elevated": #1f2937,
+	"on-surface": #f3f4f6,
+	"on-surface-muted": #9ca3af,
+	"border": #374151,
+	"gray": #94a3b8,
+	"gray-light": #1f2937,
+	"dark": #0f172a,
+) !default;
+
+$app-colors: map.merge($brand-colors, $light-theme-colors) !default;

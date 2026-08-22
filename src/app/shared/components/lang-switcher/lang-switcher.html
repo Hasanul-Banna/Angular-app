@@ -1,0 +1,36 @@
+<details #languageMenu class="group relative inline-block">
+  <summary
+    class="list-none cursor-pointer rounded-full border border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-surface-elevated)_75%,var(--color-primary)_12%)] px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-[var(--color-on-surface)] shadow-[0_14px_30px_rgba(37,99,235,0.16)] transition-all duration-200 select-none hover:border-[color-mix(in_oklab,var(--color-primary)_55%,transparent)] hover:bg-[color-mix(in_oklab,var(--color-surface-elevated)_88%,white_12%)] hover:shadow-[0_8px_24px_rgba(2,6,23,0.1)] sm:px-4 sm:py-2 sm:text-xs sm:tracking-[0.18em]"
+    aria-label="Language selector"
+  >
+    {{ selectedLanguageLabel() }}
+  </summary>
+
+  <div
+    class="absolute right-0 top-[calc(100%+0.5rem)] z-20 hidden w-36 max-w-[calc(100vw-2rem)] rounded-2xl border border-[color-mix(in_oklab,var(--color-primary)_45%,transparent)] bg-[color-mix(in_oklab,var(--color-surface)_93%,white_7%)] p-1.5 shadow-[0_18px_48px_rgba(2,6,23,0.16)] backdrop-blur-xl group-open:block group-hover:block sm:min-w-[148px]"
+  >
+    @for (language of supportedLanguages; track language.code) {
+      <button
+        type="button"
+        (click)="setLanguage(language.code); languageMenu.removeAttribute('open')"
+        class="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all duration-150"
+        [class.bg-[color-mix(in_oklab,var(--color-primary)_16%,transparent)]]="currentLanguage() === language.code"
+        [class.text-[var(--color-primary)]]="currentLanguage() === language.code"
+        [class.text-[var(--color-on-surface)]]="currentLanguage() !== language.code"
+        [class.hover:bg-[color-mix(in_oklab,var(--color-primary)_10%,transparent)]]="currentLanguage() !== language.code"
+      >
+        <span class="flex items-center gap-2">
+          <span
+            class="h-1.5 w-1.5 rounded-full"
+            [class.bg-emerald-500]="currentLanguage() === language.code"
+            [class.bg-transparent]="currentLanguage() !== language.code"
+          ></span>
+          <span>{{ getLanguageLabel(language.code) }}</span>
+        </span>
+        <span class="text-[10px] font-semibold tracking-[0.16em] text-[var(--color-on-surface-muted)]">
+          {{ language.code.toUpperCase() }}
+        </span>
+      </button>
+    }
+  </div>
+</details>

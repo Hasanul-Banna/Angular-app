@@ -1,0 +1,62 @@
+// _theme.scss
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use './color_variables' as cv;
+
+$app-colors: cv.$app-colors;
+
+@mixin emit-css-variables($colors) {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+}
+
+/* App-wide CSS variables for direct use */
+:root {
+  @include emit-css-variables(map.merge(cv.$brand-colors, cv.$light-theme-colors));
+}
+
+[data-theme='dark'] {
+  @include emit-css-variables(map.merge(cv.$brand-colors, cv.$dark-theme-colors));
+}
+
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+/* Angular Material light theme */
+$light-primary-palette: mat.m2-define-palette(mat.$m2-indigo-palette, 500);
+$light-accent-palette: mat.m2-define-palette(mat.$m2-amber-palette, A200);
+$light-warn-palette: mat.m2-define-palette(mat.$m2-red-palette, 500);
+
+$light-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $light-primary-palette,
+    accent: $light-accent-palette,
+    warn: $light-warn-palette,
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+/* Angular Material dark theme colors */
+$dark-primary-palette: mat.m2-define-palette(mat.$m2-blue-grey-palette, 200);
+$dark-accent-palette: mat.m2-define-palette(mat.$m2-light-blue-palette, A200);
+$dark-warn-palette: mat.m2-define-palette(mat.$m2-red-palette, 300);
+
+$dark-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $dark-primary-palette,
+    accent: $dark-accent-palette,
+    warn: $dark-warn-palette,
+  ),
+));
+
+@include mat.core();
+@include mat.all-component-themes($light-theme);
+
+[data-theme='dark'] {
+  @include mat.all-component-colors($dark-theme);
+}

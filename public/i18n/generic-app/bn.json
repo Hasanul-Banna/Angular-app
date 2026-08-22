@@ -1,0 +1,16 @@
+{
+  "language": {
+    "label": "ভাষা",
+    "selected": "নির্বাচিত ভাষা"
+  },
+  "theme": {
+    "appearance": "দেখা",
+    "system": "সিস্টেম",
+    "light": "হালকা",
+    "dark": "অন্ধকার"
+  },
+  "dashboard": {
+    "revenue": "মোট আয়",
+    "viewDetails": "বিস্তারিত দেখুন"
+  }
+}

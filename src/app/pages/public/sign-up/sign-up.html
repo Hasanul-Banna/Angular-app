@@ -1,0 +1,37 @@
+<section class="mx-auto w-full max-w-md px-4 pt-14 pb-12 sm:px-6">
+  <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-sm sm:p-8">
+    <h1 class="text-2xl font-bold">{{ 'SIGNUP_TITLE' | translate }}</h1>
+    <p class="mt-2 text-sm text-[var(--color-on-surface-muted)]">{{ 'SIGNUP_SUBTITLE' | translate }}</p>
+
+    <form class="mt-6 space-y-4">
+      <div>
+        <label for="name" class="mb-1 block text-sm font-medium">{{ 'SIGNUP_NAME_LABEL' | translate }}</label>
+        <input id="name" type="text" class="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-primary)]" [placeholder]="'SIGNUP_NAME_PLACEHOLDER' | translate" />
+      </div>
+
+      <div>
+        <label for="signup-email" class="mb-1 block text-sm font-medium">{{ 'SIGNUP_EMAIL_LABEL' | translate }}</label>
+        <input id="signup-email" type="email" class="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-primary)]" [placeholder]="'SIGNUP_EMAIL_PLACEHOLDER' | translate" />
+      </div>
+
+      <div>
+        <label for="signup-password" class="mb-1 block text-sm font-medium">{{ 'SIGNUP_PASSWORD_LABEL' | translate }}</label>
+        <input id="signup-password" type="password" class="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-primary)]" [placeholder]="'SIGNUP_PASSWORD_PLACEHOLDER' | translate" />
+      </div>
+
+      <div>
+        <label for="confirm-password" class="mb-1 block text-sm font-medium">{{ 'SIGNUP_CONFIRM_PASSWORD_LABEL' | translate }}</label>
+        <input id="confirm-password" type="password" class="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2.5 text-sm outline-none transition-colors focus:border-[var(--color-primary)]" [placeholder]="'SIGNUP_CONFIRM_PASSWORD_PLACEHOLDER' | translate" />
+      </div>
+
+      <button mat-flat-button type="submit" class="!mt-2 !w-full !rounded-lg !bg-[var(--color-primary)] !py-2.5 !text-white">
+        {{ 'SIGNUP_SUBMIT' | translate }}
+      </button>
+    </form>
+
+    <p class="mt-5 text-sm text-[var(--color-on-surface-muted)]">
+      {{ 'SIGNUP_HAVE_ACCOUNT' | translate }}
+      <a routerLink="/login" class="font-medium text-[var(--color-primary)] hover:underline">{{ 'SIGNUP_LOGIN_LINK' | translate }}</a>
+    </p>
+  </div>
+</section>

@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+@use "./app/theme/theme" as t;
+@use "tailwindcss";
+
+@theme {
+  @each $name, $value in t.$app-colors {
+    --color-#{$name}: #{$value};
+  }
+}
+
+:root {
+  --font-family-en: "Google Sans", "Google Sans Text", "Roboto", "Segoe UI", sans-serif;
+  --font-family-bn: "Noto Sans Bengali", "Hind Siliguri", "Noto Sans", sans-serif;
+  --app-font-family: var(--font-family-en);
+}
+
+html[lang="bn"] {
+  --app-font-family: var(--font-family-bn);
+}
+
+html,
+body {
+  font-family: var(--app-font-family);
+}
+
+button,
+input,
+textarea,
+select,
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-menu-item,
+.mat-mdc-form-field,
+.mat-mdc-card,
+.mat-mdc-dialog-container,
+.mat-mdc-option,
+.mdc-list-item,
+.mdc-button,
+.mdc-typography {
+  font-family: var(--app-font-family) !important;
+}
