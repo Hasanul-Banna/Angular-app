@@ -1,9 +1,9 @@
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import {
   type ApplicationConfig,
-  ENVIRONMENT_INITIALIZER,
   inject,
   provideBrowserGlobalErrorListeners,
+  provideEnvironmentInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
 import {
@@ -11,13 +11,9 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { DEFAULT_APP_LANGUAGE, provideAppStore } from '@core/store';
-import {
-  provideTranslateLoader,
-  provideTranslateService,
-} from '@ngx-translate/core';
+import { provideAppStore } from '@core/store';
 import { AppLanguageService } from './core/services/app-language.service';
-import { ModuleTranslateLoader } from './core/services/module-translate.loader';
+import { provideAppTranslateService } from './core/services/module-translate.loader';
 import { RouteTranslateLoaderService } from './core/services/route-translate-loader.service';
 
 import { routes } from './app.routes';
@@ -30,20 +26,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideClientHydration(withEventReplay()),
     provideAppStore(),
-    provideTranslateService({
-      lang: DEFAULT_APP_LANGUAGE,
-      fallbackLang: DEFAULT_APP_LANGUAGE,
-      loader: provideTranslateLoader(ModuleTranslateLoader),
+    provideAppTranslateService(),
+    provideEnvironmentInitializer(() => {
+      inject(AppLanguageService);
     }),
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => inject(AppLanguageService),
-    },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => inject(RouteTranslateLoaderService),
-    },
+    provideEnvironmentInitializer(() => {
+      inject(RouteTranslateLoaderService);
+    }),
   ],
 };
