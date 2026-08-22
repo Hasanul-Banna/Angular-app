@@ -1,8 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
-import { type HttpClient } from '@angular/common/http';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { type ActivatedRouteSnapshot, NavigationEnd, type Router } from '@angular/router';
-import { type TranslateService, type TranslationObject } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { type ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
+import { TranslateService, type TranslationObject } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 
@@ -14,12 +14,12 @@ export const I18N_ROUTE_DATA_KEY = 'i18nModules';
 export class RouteTranslateLoaderService {
   private readonly loadedModulesByLanguage = new Map<string, Set<string>>();
 
-  constructor(
-    private readonly httpClient: HttpClient,
-    private readonly router: Router,
-    private readonly translateService: TranslateService,
-    @Inject(PLATFORM_ID) private readonly platformId: object
-  ) {
+  private readonly httpClient = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly translateService = inject(TranslateService);
+  private readonly platformId = inject(PLATFORM_ID);
+
+  constructor() {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
