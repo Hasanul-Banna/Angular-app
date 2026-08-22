@@ -8,4 +8,5 @@ export const environment: AppEnvironment = {
 	appName: 'Angular 21 App (Dev)',
 	defaultLanguage: 'en',
 	enableDebugTools: true,
+	geminiApiKey: '',
 };

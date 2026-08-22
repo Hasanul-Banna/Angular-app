@@ -6,4 +6,5 @@ export interface AppEnvironment {
 	appName: string;
 	defaultLanguage: string;
 	enableDebugTools: boolean;
+	geminiApiKey: string;
 }
