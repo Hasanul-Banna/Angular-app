@@ -4,15 +4,7 @@ import { Observable, type Subscriber } from 'rxjs';
 
 import { environment } from '../../../environments/env';
 import { type ChatMessage } from '../store/ai-chat/ai-chat.models';
-
-export type GeminiErrorCode = 'missingKey' | 'network' | 'quota' | 'unknown';
-
-export class GeminiChatError extends Error {
-  constructor(readonly code: GeminiErrorCode, message: string) {
-    super(message);
-    this.name = 'GeminiChatError';
-  }
-}
+import { ChatError, toChatError } from './chat-error';
 
 interface GeminiClient {
   models: {
@@ -23,26 +15,25 @@ interface GeminiClient {
   };
 }
 
-const GEMINI_MODEL = 'gemini-3.6-flash';
-
 @Injectable({ providedIn: 'root' })
 export class GeminiChatService {
   private readonly platformId = inject(PLATFORM_ID);
   private client: GeminiClient | null = null;
 
-  streamReply(history: ChatMessage[]): Observable<string> {
+  streamReply(history: ChatMessage[], model: string): Observable<string> {
     return new Observable<string>((subscriber) => {
       if (!isPlatformBrowser(this.platformId)) {
         subscriber.complete();
         return;
       }
 
-      void this.runStream(history, subscriber);
+      void this.runStream(history, model, subscriber);
     });
   }
 
   private async runStream(
     history: ChatMessage[],
+    model: string,
     subscriber: Subscriber<string>
   ): Promise<void> {
     try {
@@ -53,7 +44,7 @@ export class GeminiChatService {
       }));
 
       const stream = await client.models.generateContentStream({
-        model: GEMINI_MODEL,
+        model,
         contents,
       });
 
@@ -66,13 +57,13 @@ export class GeminiChatService {
 
       subscriber.complete();
     } catch (err) {
-      subscriber.error(this.toGeminiChatError(err));
+      subscriber.error(toChatError(err));
     }
   }
 
   private async getClient(): Promise<GeminiClient> {
     if (!environment.geminiApiKey) {
-      throw new GeminiChatError('missingKey', 'Gemini API key is not configured.');
+      throw new ChatError('missingKey', 'Gemini API key is not configured.');
     }
 
     if (!this.client) {
@@ -81,23 +72,5 @@ export class GeminiChatService {
     }
 
     return this.client;
-  }
-
-  private toGeminiChatError(err: unknown): GeminiChatError {
-    if (err instanceof GeminiChatError) {
-      return err;
-    }
-
-    const message = err instanceof Error ? err.message : String(err);
-
-    if (/quota|rate.?limit|429/i.test(message)) {
-      return new GeminiChatError('quota', message);
-    }
-
-    if (/network|fetch|failed to connect/i.test(message)) {
-      return new GeminiChatError('network', message);
-    }
-
-    return new GeminiChatError('unknown', message);
   }
 }

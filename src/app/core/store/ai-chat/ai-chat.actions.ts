@@ -10,5 +10,6 @@ export const AiChatActions = createActionGroup({
     'Receive Message Success': props<{ message: ChatMessage }>(),
     'Receive Message Failure': props<{ error: string }>(),
     'Clear Conversation': emptyProps(),
+    'Select Model': props<{ modelId: string }>(),
   },
 });

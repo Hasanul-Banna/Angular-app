@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 
+import { DEFAULT_CHAT_MODEL_ID } from '@core/services/chat-models';
 import { AiChatActions } from './ai-chat.actions';
 import { type ChatStatus, type ChatMessage } from './ai-chat.models';
 
@@ -9,12 +10,14 @@ export interface AiChatState {
   messages: ChatMessage[];
   status: ChatStatus;
   error: string | null;
+  selectedModelId: string;
 }
 
 const initialState: AiChatState = {
   messages: [],
   status: 'idle',
   error: null,
+  selectedModelId: DEFAULT_CHAT_MODEL_ID,
 };
 
 export const aiChatReducer = createReducer(
@@ -41,5 +44,15 @@ export const aiChatReducer = createReducer(
     status: 'error',
     error,
   })),
-  on(AiChatActions.clearConversation, (): AiChatState => initialState)
+  // The model is a standing preference, so it outlives the conversation it was picked in.
+  on(AiChatActions.clearConversation, (state): AiChatState => ({
+    ...initialState,
+    selectedModelId: state.selectedModelId,
+  })),
+  on(AiChatActions.selectModel, (state, { modelId }): AiChatState => ({
+    ...state,
+    selectedModelId: modelId,
+    status: 'idle',
+    error: null,
+  }))
 );

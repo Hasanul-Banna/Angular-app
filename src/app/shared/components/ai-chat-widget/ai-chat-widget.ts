@@ -12,6 +12,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,10 +22,13 @@ import {
   type ChatMessage,
   selectAiChatError,
   selectAiChatMessages,
+  selectAiChatSelectedModelId,
   selectAiChatStatus,
   selectAppLanguage,
 } from '@core/store';
-import { GeminiChatError, GeminiChatService } from '@core/services/gemini-chat.service';
+import { ChatCompletionService } from '@core/services/chat-completion.service';
+import { ChatError } from '@core/services/chat-error';
+import { CHAT_MODELS, resolveChatModel } from '@core/services/chat-models';
 import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
 /** Distance (px) from the bottom within which the conversation is considered "pinned". */
@@ -46,6 +50,7 @@ const TIME_LOCALES: Record<string, string> = { en: 'en-US', bn: 'bn-BD' };
     MarkdownPipe,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatTooltipModule,
     TranslatePipe,
   ],
@@ -57,7 +62,7 @@ const TIME_LOCALES: Record<string, string> = { en: 'en-US', bn: 'bn-BD' };
 })
 export class AiChatWidget {
   private readonly store = inject(Store);
-  private readonly geminiChatService = inject(GeminiChatService);
+  private readonly chatCompletionService = inject(ChatCompletionService);
   private readonly clipboard = inject(Clipboard);
 
   private readonly scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
@@ -79,6 +84,10 @@ export class AiChatWidget {
   readonly messages = this.store.selectSignal(selectAiChatMessages);
   readonly status = this.store.selectSignal(selectAiChatStatus);
   readonly error = this.store.selectSignal(selectAiChatError);
+  readonly selectedModelId = this.store.selectSignal(selectAiChatSelectedModelId);
+
+  readonly models = CHAT_MODELS;
+  readonly selectedModel = computed(() => resolveChatModel(this.selectedModelId()));
 
   readonly isStreaming = computed(() => this.status() === 'loading');
 
@@ -188,6 +197,18 @@ export class AiChatWidget {
     this.runStream();
   }
 
+  /** Switching model abandons any in-flight reply — the next send goes to the new provider. */
+  selectModel(modelId: string): void {
+    if (modelId === this.selectedModelId()) {
+      return;
+    }
+
+    this.streamSubscription?.unsubscribe();
+    this.streamSubscription = null;
+    this.streamingText.set('');
+    this.store.dispatch(AiChatActions.selectModel({ modelId }));
+  }
+
   clearConversation(): void {
     this.streamSubscription?.unsubscribe();
     this.streamSubscription = null;
@@ -222,38 +243,40 @@ export class AiChatWidget {
     this.streamingText.set('');
 
     this.streamSubscription?.unsubscribe();
-    this.streamSubscription = this.geminiChatService.streamReply(this.messages()).subscribe({
-      next: (accumulatedText) => this.streamingText.set(accumulatedText),
-      error: (err: unknown) => {
-        this.streamingText.set('');
-        this.store.dispatch(
-          AiChatActions.receiveMessageFailure({ error: this.mapErrorToCode(err) })
-        );
-      },
-      complete: () => {
-        const finalText = this.streamingText();
-        this.streamingText.set('');
-
-        if (finalText) {
+    this.streamSubscription = this.chatCompletionService
+      .streamReply(this.messages(), this.selectedModelId())
+      .subscribe({
+        next: (accumulatedText) => this.streamingText.set(accumulatedText),
+        error: (err: unknown) => {
+          this.streamingText.set('');
           this.store.dispatch(
-            AiChatActions.receiveMessageSuccess({
-              message: {
-                id: this.generateId(),
-                role: 'assistant',
-                content: finalText,
-                createdAt: Date.now(),
-              },
-            })
+            AiChatActions.receiveMessageFailure({ error: this.mapErrorToCode(err) })
           );
-        } else {
-          this.store.dispatch(AiChatActions.receiveMessageFailure({ error: 'unknown' }));
-        }
-      },
-    });
+        },
+        complete: () => {
+          const finalText = this.streamingText();
+          this.streamingText.set('');
+
+          if (finalText) {
+            this.store.dispatch(
+              AiChatActions.receiveMessageSuccess({
+                message: {
+                  id: this.generateId(),
+                  role: 'assistant',
+                  content: finalText,
+                  createdAt: Date.now(),
+                },
+              })
+            );
+          } else {
+            this.store.dispatch(AiChatActions.receiveMessageFailure({ error: 'unknown' }));
+          }
+        },
+      });
   }
 
   private mapErrorToCode(err: unknown): string {
-    return err instanceof GeminiChatError ? err.code : 'unknown';
+    return err instanceof ChatError ? err.code : 'unknown';
   }
 
   private generateId(): string {

@@ -21,3 +21,8 @@ export const selectAiChatError = createSelector(
   selectAiChatState,
   (state) => state.error
 );
+
+export const selectAiChatSelectedModelId = createSelector(
+  selectAiChatState,
+  (state) => state.selectedModelId
+);

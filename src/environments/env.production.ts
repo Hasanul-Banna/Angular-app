@@ -9,4 +9,5 @@ export const environment: AppEnvironment = {
 	defaultLanguage: 'en',
 	enableDebugTools: false,
 	geminiApiKey: '',
+	openaiApiKey: '',
 };

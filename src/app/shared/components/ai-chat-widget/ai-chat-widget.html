@@ -10,8 +10,31 @@
           <span class="ai-avatar" [class.ai-avatar--thinking]="isStreaming()" aria-hidden="true">
             <mat-icon>auto_awesome</mat-icon>
           </span>
-          <h2 class="text-sm font-semibold text-[var(--color-on-surface)]">{{ 'aiChat.panelTitle' | translate }}</h2>
+          <div class="flex min-w-0 flex-col">
+            <h2 class="text-sm font-semibold text-[var(--color-on-surface)]">{{ 'aiChat.panelTitle' | translate }}</h2>
+            <button
+              type="button"
+              class="model-picker"
+              [matMenuTriggerFor]="modelMenu"
+              [disabled]="isStreaming()"
+              [matTooltip]="'aiChat.model.select' | translate"
+              [attr.aria-label]="'aiChat.model.select' | translate"
+            >
+              <span class="truncate">{{ selectedModel().labelKey | translate }}</span>
+              <mat-icon>expand_more</mat-icon>
+            </button>
+          </div>
         </div>
+
+        <mat-menu #modelMenu="matMenu">
+          @for (model of models; track model.id) {
+            <button type="button" mat-menu-item (click)="selectModel(model.id)">
+              <mat-icon>{{ model.id === selectedModelId() ? 'check' : 'chevron_right' }}</mat-icon>
+              <span>{{ model.labelKey | translate }}</span>
+            </button>
+          }
+        </mat-menu>
+
         <div class="flex items-center gap-1">
           <button mat-icon-button type="button" [attr.aria-label]="'aiChat.newChat' | translate" (click)="clearConversation()">
             <mat-icon class="text-base">refresh</mat-icon>

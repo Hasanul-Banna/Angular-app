@@ -25,8 +25,17 @@
     "copy": "Copy reply",
     "copied": "Copied",
     "copyCode": "Copy code",
+    "model": {
+      "label": "Model",
+      "select": "Change model"
+    },
+    "models": {
+      "geminiFlash": "Gemini 3.6 Flash",
+      "gpt51": "GPT-5.1",
+      "gpt5Mini": "GPT-5 mini"
+    },
     "errors": {
-      "missingKey": "AI chat is not configured. Please add a Gemini API key.",
+      "missingKey": "AI chat is not configured. Please add an API key for the selected model.",
       "network": "Network error. Please check your connection and try again.",
       "quota": "AI chat is temporarily unavailable due to usage limits. Please try again later.",
       "unknown": "Something went wrong. Please try again."

@@ -7,4 +7,5 @@ export interface AppEnvironment {
 	defaultLanguage: string;
 	enableDebugTools: boolean;
 	geminiApiKey: string;
+	openaiApiKey: string;
 }
