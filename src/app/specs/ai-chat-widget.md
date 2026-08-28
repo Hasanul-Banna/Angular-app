@@ -21,6 +21,10 @@ Design/implementation history: `docs/superpowers/specs/2026-08-22-ai-chat-widget
 	- Floating button + panel component. Owns the async orchestration (calling Gemini, dispatching success/failure) — there is no `@ngrx/effects` in this app, so this component is the only place that bridges the store and the Gemini service.
 - `src/app/shared/components/ai-chat-widget/ai-chat-widget.html`
 	- FAB + expandable panel markup: header (title, "new chat", close), scrollable message list, streaming bubble, error bubble with Retry, and the send form.
+- `src/app/shared/services/markdown-renderer.ts`
+	- `renderMarkdown(markdown, options)` — the small hand-rolled Markdown → HTML renderer used for assistant replies (§8.1).
+- `src/app/shared/pipes/markdown.pipe.ts`
+	- `MarkdownPipe` — pure pipe wrapping the renderer, returns `SafeHtml` for `[innerHTML]`.
 - `src/app/core/services/gemini-chat.service.ts`
 	- `GeminiChatService` — wraps `@google/genai`, exposes `streamReply(history): Observable<string>`, normalizes every failure into a `GeminiChatError`.
 - `src/app/core/store/ai-chat/*`
@@ -219,6 +223,24 @@ Two behaviors worth calling out explicitly:
 - Two `text-white` usages (the user-message bubble, the FAB icon) are literal, not token-based — this matches an existing app-wide convention (the dashboard/public layouts and several pages all use `text-white` on `bg-[var(--color-primary)]` surfaces, and there is no `--color-on-primary` token defined yet). The panel's box-shadow, by contrast, is derived from a token: `color-mix(in srgb, var(--color-dark) 24%, transparent)`.
 - Every `<button>` has an explicit `type` attribute; the template uses `@if`/`@for` exclusively (no `*ngIf`/`*ngFor`).
 
+### 8.1 Rendered Markdown (assistant replies)
+
+Assistant text — completed and streaming alike — is rendered through `MarkdownPipe` into `[innerHTML]`. User messages are **not** parsed; they stay plain text in a `whitespace-pre-wrap` bubble.
+
+`renderMarkdown` (`shared/services/markdown-renderer.ts`) is hand-rolled rather than a library for two reasons: the widget sits in the app-root bundle (§6.3's budget history), and the output needs its own `md-*` class hooks for token-based theming.
+
+- **Safety**: the entire source is HTML-escaped *before* parsing, and the only unescaped markup in the result is the fixed tag set the renderer writes itself. That is what makes the pipe's `bypassSecurityTrustHtml` sound. Link `href`s are additionally restricted to `http:`/`https:`/`mailto:` — anything else renders as literal text.
+- **Supported**: ATX headings (`#` starts at `<h3>`, so the panel's `<h2>` title keeps the outline ordered), fenced code blocks with a language label and a copy button, ordered/unordered lists including nesting and `- [ ]` task items, blockquotes, GFM pipe tables with column alignment, thematic breaks, paragraphs, and inline code/links/autolinks/bold/italic/strikethrough.
+- **Not supported**: reference links, footnotes, inline HTML, setext headings.
+- **Streaming**: an unterminated fence renders as a code block anyway, so a half-arrived code sample is still readable rather than showing raw backticks. The streaming bubble also carries `.md-content--streaming`, which paints a blinking caret after its last block.
+- Styles live in the widget's SCSS under `:host ::ng-deep .md-content`. `::ng-deep` is *required*, not a shortcut: `[innerHTML]` children never receive the component's `_ngcontent` attribute, so ordinary emulated-encapsulation selectors would not match them; the `:host` prefix keeps the rules inside this widget's subtree.
+
+### 8.2 Auto-scroll, copy, and timestamps
+
+- **Auto-scroll**: an `afterRenderEffect` tracks `messages()`, `streamingText()`, `isStreaming()`, `error()` and `isOpen()`, and scrolls the list to the bottom after each render — so a reply visibly crawls down as tokens land. A `stickToBottom` signal, updated by the list's `(scroll)` handler, turns this off as soon as the user scrolls more than 48px up and re-arms when they return to the bottom; sending, retrying, clearing, and toggling the panel all re-pin. Jumps over 240px animate (`behavior: 'smooth'`); streaming-sized deltas snap, which reads as gradual because each delta is small.
+- **Copy**: each assistant message has a hover/focus-revealed copy button (`@angular/cdk/clipboard`), swapping to a check icon for ~1.6s. Code blocks get their own copy button, which cannot carry an Angular binding because it lives inside `[innerHTML]` — clicks on it are caught by a delegated `host: { '(click)': ... }` handler that reads the sibling `<code>` and toggles `data-copied` on the element directly.
+- **Timestamps**: `formatTime(createdAt)` formats each message's existing `createdAt` with `Intl.DateTimeFormat`, keyed off the NgRx `selectAppLanguage` signal (`en` → `en-US`, `bn` → `bn-BD`), so times localize with the rest of the UI.
+
 ---
 
 ## 9. i18n
@@ -226,7 +248,8 @@ Two behaviors worth calling out explicitly:
 Keys live in `public/i18n/generic-app/{en,bn}.json` under `aiChat`:
 
 - `toggleOpen`, `toggleClose` — FAB `aria-label` depending on open/closed state.
-- `panelTitle`, `placeholder`, `send`, `newChat`, `retry` — static UI strings.
+- `panelTitle`, `placeholder`, `send`, `newChat`, `retry`, `thinking` — static UI strings.
+- `copy`, `copied`, `copyCode` — message copy button (tooltip + `aria-label`, swapping to `copied` for ~1.6s) and the code-block copy button. `copyCode` is passed *into* the renderer as a pipe argument (`content | markdown: ('aiChat.copyCode' | translate)`) so the pure pipe still re-renders on a language switch.
 - `errors.missingKey`, `errors.network`, `errors.quota`, `errors.unknown` — one per `GeminiErrorCode`, resolved via `'aiChat.errors.' + error() | translate`.
 
 Because `generic-app` is the module always loaded on every route (see [lang-switcher.md](lang-switcher.md) §9.1), no route needs `data.i18nModules` wiring for these keys to resolve — the widget's translations are available from the very first paint, on any page.
@@ -306,7 +329,9 @@ flowchart TD
 - **No `@ngrx/effects`.** All async orchestration is plain component code (§7.3), by design.
 - **No multiple/named conversations.** There is exactly one ongoing conversation; "New chat" discards it, it does not save/archive it anywhere.
 - **No cancellation of the underlying Gemini request.** Unsubscribing stops the widget from acting on further chunks, but does not send an abort signal — the network request keeps running to completion in the background (see the "New chat mid-stream" edge case above).
-- **No automated interactive-browser test coverage.** Only the NgRx reducer and `GeminiChatService` (with a mocked client) have unit specs. There is no E2E/integration test that actually opens the panel, sends a message, and asserts on rendered DOM — that verification has so far been manual/visual only.
+- **No syntax highlighting in code blocks.** They get a language label, monospace styling, and a copy button, but no tokenizer — that would mean a new dependency in the root bundle.
+- **No full CommonMark/GFM coverage.** See §8.1 for exactly what the renderer does and does not parse.
+- **No automated interactive-browser test coverage.** Only the NgRx reducer, `GeminiChatService` (with a mocked client), and `renderMarkdown` have unit specs. There is no E2E/integration test that actually opens the panel, sends a message, and asserts on rendered DOM — that verification has so far been manual/visual only.
 - **No streaming request retry/backoff.** A network blip mid-stream surfaces as a `network` error with a manual Retry button; there's no automatic reconnect.
 - **No configurable model or generation parameters.** The model (`gemini-3.6-flash`) is a hardcoded constant; there's no UI or config for temperature, max tokens, system instructions, etc.
 
@@ -338,4 +363,7 @@ For local testing, put a real key in `src/environments/env.local.ts` instead —
 5. Click "New chat" — the conversation should clear immediately.
 6. Reload the page after sending at least one message — the prior conversation should reappear (persisted via `localStorage['ai-chat-history']`).
 7. Switch language while the panel is open — panel title/placeholder/buttons should update to the new language immediately.
-8. Switch theme while the panel is open — panel should remain legible in both light and dark mode.
+8. Switch theme while the panel is open — panel should remain legible in both light and dark mode, rendered Markdown included.
+9. Ask for a reply containing headings, a list, a table, and a fenced code block — all four should render as formatted blocks, not raw Markdown, and the code block should show its language and copy button.
+10. While a long reply streams, scroll up mid-stream — the view should stay where you put it; scroll back to the bottom and it should resume following.
+11. Hover an assistant message — a copy button should appear next to its timestamp and switch to a check icon after clicking.

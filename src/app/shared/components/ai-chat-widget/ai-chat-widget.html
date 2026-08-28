@@ -6,7 +6,12 @@
         shadow-[0_18px_48px_color-mix(in_srgb,var(--color-dark)_24%,transparent)]"
     >
       <header class="flex items-center justify-between gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-3">
-        <h2 class="text-sm font-semibold text-[var(--color-on-surface)]">{{ 'aiChat.panelTitle' | translate }}</h2>
+        <div class="flex items-center gap-2">
+          <span class="ai-avatar" [class.ai-avatar--thinking]="isStreaming()" aria-hidden="true">
+            <mat-icon>auto_awesome</mat-icon>
+          </span>
+          <h2 class="text-sm font-semibold text-[var(--color-on-surface)]">{{ 'aiChat.panelTitle' | translate }}</h2>
+        </div>
         <div class="flex items-center gap-1">
           <button mat-icon-button type="button" [attr.aria-label]="'aiChat.newChat' | translate" (click)="clearConversation()">
             <mat-icon class="text-base">refresh</mat-icon>
@@ -17,23 +22,71 @@
         </div>
       </header>
 
-      <div class="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+      <div
+        #scrollContainer
+        class="flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-3"
+        (scroll)="onConversationScroll($event)"
+      >
         @for (message of messages(); track message.id) {
-          <div
-            class="max-w-[85%] rounded-2xl px-3 py-2 text-sm"
-            [class.ml-auto]="message.role === 'user'"
-            [class.bg-[var(--color-primary)]]="message.role === 'user'"
-            [class.text-white]="message.role === 'user'"
-            [class.bg-[var(--color-gray-light)]]="message.role === 'assistant'"
-            [class.text-[var(--color-on-surface)]]="message.role === 'assistant'"
-          >
-            {{ message.content }}
+          @if (message.role === 'assistant') {
+            <div class="group flex items-start gap-2">
+              <span class="ai-avatar ai-avatar--sm mt-1" aria-hidden="true">
+                <mat-icon>auto_awesome</mat-icon>
+              </span>
+              <div class="min-w-0 max-w-[85%]">
+                <div
+                  class="md-content rounded-2xl rounded-bl-md bg-[var(--color-gray-light)] px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                  [innerHTML]="message.content | markdown: ('aiChat.copyCode' | translate)"
+                ></div>
+                <div class="message-meta">
+                  <span>{{ formatTime(message.createdAt) }}</span>
+                  <button
+                    type="button"
+                    class="message-copy"
+                    [matTooltip]="(copiedKey() === message.id ? 'aiChat.copied' : 'aiChat.copy') | translate"
+                    [attr.aria-label]="(copiedKey() === message.id ? 'aiChat.copied' : 'aiChat.copy') | translate"
+                    (click)="copyMessage(message)"
+                  >
+                    <mat-icon>{{ copiedKey() === message.id ? 'check' : 'content_copy' }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="ml-auto flex max-w-[85%] flex-col items-end">
+              <div
+                class="whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-[var(--color-primary)] px-3 py-2 text-sm text-white"
+              >{{ message.content }}</div>
+              <div class="message-meta message-meta--user">
+                <span>{{ formatTime(message.createdAt) }}</span>
+              </div>
+            </div>
+          }
+        }
+
+        @if (isStreaming() && !streamingText()) {
+          <div class="flex items-end gap-2" role="status" [attr.aria-label]="'aiChat.thinking' | translate">
+            <span class="ai-avatar ai-avatar--sm ai-avatar--thinking" aria-hidden="true">
+              <mat-icon>auto_awesome</mat-icon>
+            </span>
+            <div class="thinking-bubble rounded-2xl rounded-bl-md px-3 py-2.5">
+              <span class="thinking-dot"></span>
+              <span class="thinking-dot"></span>
+              <span class="thinking-dot"></span>
+            </div>
           </div>
         }
 
         @if (isStreaming() && streamingText()) {
-          <div class="max-w-[85%] rounded-2xl bg-[var(--color-gray-light)] px-3 py-2 text-sm text-[var(--color-on-surface)]">
-            {{ streamingText() }}
+          <div class="flex items-start gap-2">
+            <span class="ai-avatar ai-avatar--sm ai-avatar--thinking mt-1" aria-hidden="true">
+              <mat-icon>auto_awesome</mat-icon>
+            </span>
+            <div
+              class="md-content md-content--streaming min-w-0 max-w-[85%] rounded-2xl rounded-bl-md bg-[var(--color-gray-light)] px-3 py-2 text-sm text-[var(--color-on-surface)]"
+              aria-live="polite"
+              [innerHTML]="streamingText() | markdown"
+            ></div>
           </div>
         }
 

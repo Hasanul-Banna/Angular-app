@@ -21,6 +21,10 @@
     "send": "Send",
     "newChat": "New chat",
     "retry": "Retry",
+    "thinking": "AI is thinking...",
+    "copy": "Copy reply",
+    "copied": "Copied",
+    "copyCode": "Copy code",
     "errors": {
       "missingKey": "AI chat is not configured. Please add a Gemini API key.",
       "network": "Network error. Please check your connection and try again.",
