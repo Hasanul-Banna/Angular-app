@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-forgot-password-page',
   imports: [MatButtonModule, TranslatePipe],
   templateUrl: './forgot-password.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './forgot-password.scss',
 })
 export class ForgotPasswordPage {

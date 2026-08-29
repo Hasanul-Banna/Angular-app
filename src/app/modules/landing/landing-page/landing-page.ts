@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 export const LANDING_I18N_MODULES = ['landing'];
 
@@ -6,6 +6,7 @@ export const LANDING_I18N_MODULES = ['landing'];
   selector: 'app-landing-page',
   imports: [],
   templateUrl: './landing-page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './landing-page.scss',
 })
 export class LandingPage {

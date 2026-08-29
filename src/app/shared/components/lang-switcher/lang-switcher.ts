@@ -1,22 +1,12 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  computed,
-  inject,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-  APP_LANGUAGES,
-  type AppLanguage,
-  AppLanguageActions,
-  selectAppLanguage,
-} from '@core/store';
+import { APP_LANGUAGES, type AppLanguage, AppLanguageActions, selectAppLanguage } from '@core/store';
 
 @Component({
   selector: 'app-lang-switcher',
   imports: [],
   templateUrl: './lang-switcher.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './lang-switcher.scss',
 })
 export class LangSwitcher {
@@ -49,4 +39,3 @@ export class LangSwitcher {
     return language === 'bn' ? 'বাংলা' : 'English';
   }
 }
-

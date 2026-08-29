@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -13,6 +13,7 @@ interface UserRow {
   selector: 'app-user-management-page',
   imports: [MatButtonModule, TranslatePipe],
   templateUrl: './user-management.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './user-management.scss',
 })
 export class UserManagementPage {

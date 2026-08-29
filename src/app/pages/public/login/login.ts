@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-login-page',
   imports: [RouterLink, MatButtonModule, TranslatePipe],
   templateUrl: './login.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './login.scss',
 })
 export class LoginPage {}

@@ -1,13 +1,4 @@
-import {
-  afterRenderEffect,
-  Component,
-  computed,
-  type ElementRef,
-  inject,
-  signal,
-  untracked,
-  viewChild,
-} from '@angular/core';
+import { afterRenderEffect, Component, computed, type ElementRef, inject, signal, untracked, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,14 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { type Subscription } from 'rxjs';
-import {
-  AiChatActions,
-  type ChatMessage,
-  selectAiChatError,
-  selectAiChatMessages,
-  selectAiChatStatus,
-  selectAppLanguage,
-} from '@core/store';
+import { AiChatActions, type ChatMessage, selectAiChatError, selectAiChatMessages, selectAiChatStatus, selectAppLanguage } from '@core/store';
 import { GeminiChatError, GeminiChatService } from '@core/services/gemini-chat.service';
 import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
@@ -41,18 +25,12 @@ const TIME_LOCALES: Record<string, string> = { en: 'en-US', bn: 'bn-BD' };
 
 @Component({
   selector: 'app-ai-chat-widget',
-  imports: [
-    FormsModule,
-    MarkdownPipe,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    TranslatePipe,
-  ],
+  imports: [FormsModule, MarkdownPipe, MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
   templateUrl: './ai-chat-widget.html',
   styleUrl: './ai-chat-widget.scss',
   // Delegated on the host because the copy buttons inside rendered Markdown are plain DOM
   // and cannot carry a template binding. Clicks elsewhere in the widget fall through.
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(click)': 'onRenderedClick($event)' },
 })
 export class AiChatWidget {
@@ -226,9 +204,7 @@ export class AiChatWidget {
       next: (accumulatedText) => this.streamingText.set(accumulatedText),
       error: (err: unknown) => {
         this.streamingText.set('');
-        this.store.dispatch(
-          AiChatActions.receiveMessageFailure({ error: this.mapErrorToCode(err) })
-        );
+        this.store.dispatch(AiChatActions.receiveMessageFailure({ error: this.mapErrorToCode(err) }));
       },
       complete: () => {
         const finalText = this.streamingText();
@@ -243,7 +219,7 @@ export class AiChatWidget {
                 content: finalText,
                 createdAt: Date.now(),
               },
-            })
+            }),
           );
         } else {
           this.store.dispatch(AiChatActions.receiveMessageFailure({ error: 'unknown' }));

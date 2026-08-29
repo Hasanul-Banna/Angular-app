@@ -1,15 +1,9 @@
-import { provideHttpClient } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { provideHttpClient, withXhr } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 
-import {
-  GLOBAL_I18N_MODULE,
-  provideAppTranslateService,
-} from './module-translate.loader';
+import { GLOBAL_I18N_MODULE, provideAppTranslateService } from './module-translate.loader';
 
 describe('app translate wiring', () => {
   let translateService: TranslateService;
@@ -17,11 +11,7 @@ describe('app translate wiring', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideAppTranslateService(),
-      ],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting(), provideAppTranslateService()],
     });
 
     translateService = TestBed.inject(TranslateService);
