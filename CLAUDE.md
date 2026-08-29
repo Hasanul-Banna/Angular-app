@@ -12,8 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run lint` / `ng lint` — ESLint (flat config, `eslint.config.js`); lint a subset with `ng lint --lint-file-patterns 'src/app/pages/**/*.ts'`
 - `npm run format` / `npm run format:check` — Prettier over `src/**/*.{ts,html,scss}`
 - `npm test` / `ng test` — Karma/Jasmine unit tests via the `@angular/build:karma` builder
-  - Single spec: `ng test --include='**/theme.service.spec.ts'`
-  - **There are currently no `*.spec.ts` files in the repo** — `ng test` runs an empty suite. New tests are the first ones.
+  - Single spec: `ng test --include='**/gemini-chat.service.spec.ts'`
+  - Existing specs: `core/services/{gemini-chat,module-translate.loader}.spec.ts`, `core/store/ai-chat/ai-chat.reducer.spec.ts`, `shared/services/markdown-renderer.spec.ts`. Coverage is otherwise thin — most components and services have no spec yet.
 - `npm run serve:ssr` — run the built SSR server (`node dist/angular-21/server/server.mjs`) after a build
 - `ng generate component path/to/name` — scaffold a standalone component (SCSS style by default, `app` selector prefix, per `angular.json`)
 
@@ -50,10 +50,12 @@ This is an Angular LT standalone-component app (no NgModules) with SSR enabled v
 - `layouts/` — routed shell components that host a `<router-outlet>` plus chrome (`public-layout`, `dashboard-layout`). These are the top-level route components.
 - `pages/` — the actual routed screens, grouped by shell: `pages/public/{home,about,login,sign-up,forgot-password}`, `pages/dashboard/{dashboard,user-management}`.
 - `modules/` — **legacy**: `modules/auth/{login,sign-up}` and `modules/landing/landing-page` are no longer referenced by `app.routes.ts`. Add new screens under `pages/`, not here.
-- `shared/components/` — reusable standalone components (`theme-switcher`, `lang-switcher`).
+- `shared/components/` — reusable standalone components (`theme-switcher`, `lang-switcher`, `ai-chat-widget`).
+- `shared/services/` — `markdown-renderer.ts`, a hand-rolled Markdown→HTML renderer used only by the AI chat widget (see below).
+- `shared/pipes/` — `markdown.pipe.ts`, a pure pipe wrapping the renderer for `[innerHTML]` binding.
 - `theme/` — SCSS design tokens (`color_variables.scss`) and Material theme setup (`_theme.scss`).
 - `specs/` — architecture/spec docs in Markdown (`lang-switcher.md`, `theming.md`, `theme-switcher.md`, `ai-chat-widget.md`). Read the relevant one before touching i18n, theming, or the AI chat widget.
-- `shared/directives|models|pipes|services|types`, `ui-kits/`, `utils/` — currently empty, reserved for growth.
+- `shared/directives|models|types`, `ui-kits/`, `utils/` — currently empty, reserved for growth.
 - `design-flow/` (repo root) — SVG diagrams of the Angular ecosystem and the Tailwind/Material integration flow.
 
 ### Routing and SSR
@@ -68,7 +70,18 @@ This is an Angular LT standalone-component app (no NgModules) with SSR enabled v
 
 Feature state lives under `core/store/<feature>/` with `<feature>.actions.ts`, `.models.ts`, `.reducer.ts`, `.selectors.ts`. Everything is re-exported through `core/store/index.ts`. `app-store.providers.ts` wires `provideAppStore()`, registered in `app.config.ts`.
 
-Persistence to `localStorage` is done via NgRx **meta-reducers** (`core/store/meta-reducers/`), not inside services — see `app-language-storage.metareducer.ts` for the pattern (read on `INIT`/`UPDATE`, write on every action).
+Persistence to `localStorage` is done via NgRx **meta-reducers** (`core/store/meta-reducers/`), not inside services — see `app-language-storage.metareducer.ts` for the pattern (read on `INIT`/`UPDATE`, write on every action). Current features: `appLanguage`, `aiChat`, each with its own meta-reducer wired in `app-store.providers.ts`.
+
+There is no `@ngrx/effects` anywhere in this app — async work (e.g. calling the Gemini API) is bridged from plain component code that dispatches actions itself once a promise/observable settles.
+
+### AI chat widget (Gemini)
+
+Full flow, edge cases, and extension points documented in [src/app/specs/ai-chat-widget.md](src/app/specs/ai-chat-widget.md). Key points:
+
+- `<app-ai-chat-widget />` (`shared/components/ai-chat-widget/`) is mounted once in `app.html` next to `<router-outlet />`, so it's available on every route; state lives in the `aiChat` NgRx feature and persists via `ai-chat-storage.metareducer.ts` (`localStorage['ai-chat-history']`, messages only — not status/error).
+- `GeminiChatService` (`core/services/gemini-chat.service.ts`) wraps `@google/genai` with a **dynamic** `import()` — never a static top-level import — because the SDK's Node-oriented dependency chain blew the production bundle budget when loaded eagerly from a root-mounted, `providedIn: 'root'` service. Follow the same lazy-import pattern for any other browser-only third-party SDK added to a global component.
+- `environment.geminiApiKey` is empty string in every committed environment file (`src/environments/env*.ts`); use `npm run dev:local` with a real key in the gitignored `src/environments/env.local.ts`. There is no backend proxy — the key is visible in the browser by design (see spec §14 for the accepted trade-off).
+- `GeminiChatService.streamReply` short-circuits via `isPlatformBrowser` so no Gemini call or SDK import ever happens during SSR/prerendering.
 
 ### i18n (`@ngx-translate/core`)
 

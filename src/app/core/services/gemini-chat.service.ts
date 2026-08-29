@@ -8,7 +8,10 @@ import { type ChatMessage } from '../store/ai-chat/ai-chat.models';
 export type GeminiErrorCode = 'missingKey' | 'network' | 'quota' | 'unknown';
 
 export class GeminiChatError extends Error {
-  constructor(readonly code: GeminiErrorCode, message: string) {
+  constructor(
+    readonly code: GeminiErrorCode,
+    message: string,
+  ) {
     super(message);
     this.name = 'GeminiChatError';
   }
@@ -41,10 +44,7 @@ export class GeminiChatService {
     });
   }
 
-  private async runStream(
-    history: ChatMessage[],
-    subscriber: Subscriber<string>
-  ): Promise<void> {
+  private async runStream(history: ChatMessage[], subscriber: Subscriber<string>): Promise<void> {
     try {
       const client = await this.getClient();
       const contents = history.map((message) => ({

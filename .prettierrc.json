@@ -1,5 +1,5 @@
 {
-  "printWidth": 200,
+  "printWidth": 150,
   "tabWidth": 2,
   "useTabs": false,
   "semi": true,
@@ -7,13 +7,27 @@
   "quoteProps": "as-needed",
   "trailingComma": "all",
   "bracketSpacing": true,
+  "bracketSameLine": false,
   "arrowParens": "always",
   "endOfLine": "lf",
+  "singleAttributePerLine": false,
   "overrides": [
     {
       "files": "*.html",
       "options": {
         "parser": "angular"
+      }
+    },
+    {
+      "files": "*.scss",
+      "options": {
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.json", "*.jsonc"],
+      "options": {
+        "trailingComma": "none"
       }
     }
   ]
