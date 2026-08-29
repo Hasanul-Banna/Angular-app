@@ -5,8 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - `npm run dev` / `ng serve --configuration development` — start dev server at `http://localhost:4200/`
+- `npm run dev:local` / `ng serve --configuration local` — dev server using `src/environments/env.local.ts` (gitignored, for a real local API key)
 - `npm run build` — production build (default config), output to `dist/`
-- `npm run build:dev` / `npm run build:prod` — explicit configuration builds
+- `npm run build:dev` / `npm run build:prod` / `npm run build:local` — explicit configuration builds
 - `npm run watch` — dev build with `--watch`
 - `npm run lint` / `ng lint` — ESLint (flat config, `eslint.config.js`); lint a subset with `ng lint --lint-file-patterns 'src/app/pages/**/*.ts'`
 - `npm run format` / `npm run format:check` — Prettier over `src/**/*.{ts,html,scss}`
@@ -37,7 +38,7 @@ Enforced as errors, so write new code this way from the start:
 
 ## Architecture
 
-This is an Angular 21 standalone-component app (no NgModules) with SSR enabled via `@angular/ssr`, using NgRx for global state and `@ngx-translate/core` for i18n. Styling is a hybrid of SCSS design tokens, Angular Material (M2 API), and Tailwind CSS v4.
+This is an Angular LT standalone-component app (no NgModules) with SSR enabled via `@angular/ssr`, using NgRx for global state and `@ngx-translate/core` for i18n. Styling is a hybrid of SCSS design tokens, Angular Material (M2 API), and Tailwind CSS v4.
 
 ### Path alias
 
@@ -51,7 +52,7 @@ This is an Angular 21 standalone-component app (no NgModules) with SSR enabled v
 - `modules/` — **legacy**: `modules/auth/{login,sign-up}` and `modules/landing/landing-page` are no longer referenced by `app.routes.ts`. Add new screens under `pages/`, not here.
 - `shared/components/` — reusable standalone components (`theme-switcher`, `lang-switcher`).
 - `theme/` — SCSS design tokens (`color_variables.scss`) and Material theme setup (`_theme.scss`).
-- `specs/` — architecture/spec docs in Markdown (`lang-switcher.md`, `theming.md`, `theme-switcher.md`). Read the relevant one before touching i18n or theming.
+- `specs/` — architecture/spec docs in Markdown (`lang-switcher.md`, `theming.md`, `theme-switcher.md`, `ai-chat-widget.md`). Read the relevant one before touching i18n, theming, or the AI chat widget.
 - `shared/directives|models|pipes|services|types`, `ui-kits/`, `utils/` — currently empty, reserved for growth.
 - `design-flow/` (repo root) — SVG diagrams of the Angular ecosystem and the Tailwind/Material integration flow.
 

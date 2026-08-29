@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,17 +8,9 @@ import { ThemeSwitcher } from '../../shared/components/theme-switcher/theme-swit
 
 @Component({
   selector: 'app-public-layout',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    MatButtonModule,
-    MatIconModule,
-    TranslatePipe,
-    LangSwitcher,
-    ThemeSwitcher,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatIconModule, TranslatePipe, LangSwitcher, ThemeSwitcher],
   templateUrl: './public-layout.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './public-layout.scss',
 })
 export class PublicLayout {

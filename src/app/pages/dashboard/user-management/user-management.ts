@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -13,31 +13,32 @@ interface UserRow {
   selector: 'app-user-management-page',
   imports: [MatButtonModule, TranslatePipe],
   templateUrl: './user-management.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './user-management.scss',
 })
 export class UserManagementPage {
   readonly users: UserRow[] = [
     {
       name: 'Ayesha Rahman',
-      email: 'ayesha.rahman@acmehub.com',
+      email: 'ayesha.rahman@AngularLT.com',
       role: 'Admin',
       status: 'Active',
     },
     {
       name: 'Rafiul Karim',
-      email: 'rafiul.karim@acmehub.com',
+      email: 'rafiul.karim@AngularLT.com',
       role: 'Manager',
       status: 'Pending',
     },
     {
       name: 'Nusrat Jahan',
-      email: 'nusrat.jahan@acmehub.com',
+      email: 'nusrat.jahan@AngularLT.com',
       role: 'Support',
       status: 'Suspended',
     },
     {
       name: 'Tanvir Hossain',
-      email: 'tanvir.hossain@acmehub.com',
+      email: 'tanvir.hossain@AngularLT.com',
       role: 'Analyst',
       status: 'Active',
     },

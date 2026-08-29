@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 export const LOGIN_I18N_MODULES = ['auth'];
@@ -7,6 +7,7 @@ export const LOGIN_I18N_MODULES = ['auth'];
   selector: 'app-login',
   imports: [TranslatePipe],
   templateUrl: './login.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './login.scss',
 })
 export class Login {

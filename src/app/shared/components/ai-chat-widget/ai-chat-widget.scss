@@ -1,0 +1,447 @@
+:host {
+	display: contents;
+}
+
+.ai-avatar {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	border-radius: 9999px;
+	background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+	color: #fff;
+
+	// Material sizes mat-icon at 24px by default — scale it down to the orb.
+	mat-icon {
+		width: 1rem;
+		height: 1rem;
+		font-size: 1rem;
+		line-height: 1rem;
+	}
+}
+
+.ai-avatar--sm {
+	width: 1.5rem;
+	height: 1.5rem;
+
+	mat-icon {
+		width: 0.875rem;
+		height: 0.875rem;
+		font-size: 0.875rem;
+		line-height: 0.875rem;
+	}
+}
+
+.ai-avatar--thinking {
+	animation: ai-avatar-breathe 1.8s ease-in-out infinite;
+
+	// A ring — not a disc — orbiting just outside the orb: the conic gradient is
+	// masked down to its outer 3px band.
+	&::before {
+		content: "";
+		position: absolute;
+		inset: -3px;
+		border-radius: inherit;
+		background: conic-gradient(
+			from 0deg,
+			transparent 0deg,
+			color-mix(in srgb, var(--color-info) 70%, transparent) 120deg,
+			var(--color-primary) 260deg,
+			transparent 360deg
+		);
+		mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+		-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+		animation:
+			ai-avatar-spin 1.4s linear infinite,
+			ai-avatar-pulse 1.8s ease-in-out infinite;
+	}
+}
+
+.thinking-bubble {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	background: linear-gradient(
+		100deg,
+		var(--color-gray-light) 40%,
+		color-mix(in srgb, var(--color-primary) 22%, var(--color-gray-light)) 50%,
+		var(--color-gray-light) 60%
+	);
+	background-size: 200% 100%;
+	animation: thinking-shimmer 1.8s ease-in-out infinite;
+}
+
+.thinking-dot {
+	width: 0.4rem;
+	height: 0.4rem;
+	border-radius: 9999px;
+	background-color: var(--color-primary);
+	opacity: 0.35;
+	animation: thinking-wave 1.3s ease-in-out infinite;
+
+	&:nth-child(2) {
+		animation-delay: 0.16s;
+	}
+
+	&:nth-child(3) {
+		animation-delay: 0.32s;
+	}
+}
+
+// Rendered Markdown (see shared/services/markdown-renderer.ts). The bubble sets the base
+// font size; everything below is expressed in em so both bubble sizes stay in proportion.
+//
+// ::ng-deep is required here, not a shortcut: the markup comes from [innerHTML], so those
+// elements never receive the component's _ngcontent scoping attribute and ordinary
+// emulated-encapsulation selectors would not match them. The :host prefix keeps the rules
+// contained to this widget's subtree rather than leaking app-wide.
+:host ::ng-deep .md-content {
+	overflow-wrap: anywhere;
+
+	> :first-child {
+		margin-top: 0;
+	}
+
+	> :last-child {
+		margin-bottom: 0;
+	}
+
+	.md-p {
+		margin: 0.5em 0;
+		line-height: 1.6;
+	}
+
+	.md-heading {
+		margin: 0.9em 0 0.4em;
+		font-weight: 600;
+		line-height: 1.35;
+		color: var(--color-on-surface);
+	}
+
+	h3.md-heading {
+		font-size: 1.15em;
+	}
+
+	h4.md-heading {
+		font-size: 1.05em;
+	}
+
+	h5.md-heading,
+	h6.md-heading {
+		font-size: 1em;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		opacity: 0.85;
+	}
+
+	.md-list {
+		margin: 0.5em 0;
+		padding-inline-start: 1.25em;
+		list-style-position: outside;
+	}
+
+	ul.md-list {
+		list-style-type: disc;
+	}
+
+	ol.md-list {
+		list-style-type: decimal;
+	}
+
+	.md-list .md-list {
+		margin: 0.25em 0;
+	}
+
+	.md-li {
+		margin: 0.25em 0;
+		line-height: 1.55;
+
+		&::marker {
+			color: color-mix(in srgb, var(--color-primary) 70%, var(--color-on-surface));
+		}
+	}
+
+	.md-li--task {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5em;
+		margin-inline-start: -1.25em;
+		list-style: none;
+	}
+
+	.md-li--done > span {
+		opacity: 0.65;
+		text-decoration: line-through;
+	}
+
+	.md-task-box {
+		margin-top: 0.28em;
+		accent-color: var(--color-primary);
+	}
+
+	.md-quote {
+		margin: 0.6em 0;
+		padding: 0.1em 0 0.1em 0.75em;
+		border-inline-start: 3px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+		color: color-mix(in srgb, var(--color-on-surface) 78%, transparent);
+		font-style: italic;
+	}
+
+	.md-hr {
+		margin: 0.9em 0;
+		border: 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.md-code {
+		padding: 0.1em 0.35em;
+		border-radius: 0.35rem;
+		background: color-mix(in srgb, var(--color-on-surface) 10%, transparent);
+		font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Consolas", monospace;
+		font-size: 0.88em;
+	}
+
+	.md-link {
+		color: var(--color-primary);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:hover {
+			text-decoration-thickness: 2px;
+		}
+	}
+
+	.md-codeblock {
+		margin: 0.65em 0;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		background: var(--color-surface-elevated);
+	}
+
+	.md-codeblock__bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.25rem 0.35rem 0.25rem 0.7rem;
+		border-bottom: 1px solid var(--color-border);
+		background: color-mix(in srgb, var(--color-on-surface) 5%, transparent);
+	}
+
+	.md-codeblock__lang {
+		font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Consolas", monospace;
+		font-size: 0.7em;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: color-mix(in srgb, var(--color-on-surface) 60%, transparent);
+	}
+
+	.md-copy {
+		display: inline-flex;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 0.4rem;
+		color: color-mix(in srgb, var(--color-on-surface) 65%, transparent);
+		cursor: pointer;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in srgb, var(--color-on-surface) 10%, transparent);
+			color: var(--color-on-surface);
+		}
+
+		&[data-copied] {
+			color: var(--color-primary);
+		}
+	}
+
+	.md-pre {
+		margin: 0;
+		padding: 0.7rem;
+		overflow-x: auto;
+
+		code {
+			font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Consolas", monospace;
+			font-size: 0.82em;
+			line-height: 1.55;
+			white-space: pre;
+		}
+	}
+
+	.md-table-wrap {
+		margin: 0.65em 0;
+		overflow-x: auto;
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+	}
+
+	.md-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.9em;
+	}
+
+	.md-th,
+	.md-td {
+		padding: 0.4em 0.6em;
+		border-bottom: 1px solid var(--color-border);
+		text-align: start;
+		white-space: nowrap;
+	}
+
+	.md-th {
+		font-weight: 600;
+		background: color-mix(in srgb, var(--color-on-surface) 5%, transparent);
+	}
+
+	.md-table tbody tr:last-child .md-td {
+		border-bottom: 0;
+	}
+}
+
+// A blinking caret pinned to the end of the reply while it is still being written.
+:host ::ng-deep .md-content--streaming > :last-child::after {
+	content: "";
+	display: inline-block;
+	width: 0.45em;
+	height: 1em;
+	margin-inline-start: 0.15em;
+	vertical-align: -0.15em;
+	border-radius: 1px;
+	background-color: var(--color-primary);
+	animation: streaming-caret 1s steps(2, start) infinite;
+}
+
+.message-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.15rem;
+	margin-top: 0.2rem;
+	padding-inline: 0.35rem;
+	font-size: 0.68rem;
+	color: color-mix(in srgb, var(--color-on-surface) 55%, transparent);
+}
+
+.message-meta--user {
+	justify-content: flex-end;
+}
+
+.message-copy {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.35rem;
+	height: 1.35rem;
+	border-radius: 9999px;
+	color: inherit;
+	cursor: pointer;
+	opacity: 0;
+	transition:
+		opacity 0.15s ease,
+		background-color 0.15s ease;
+
+	mat-icon {
+		width: 0.85rem;
+		height: 0.85rem;
+		font-size: 0.85rem;
+		line-height: 0.85rem;
+	}
+
+	&:hover {
+		background: color-mix(in srgb, var(--color-on-surface) 10%, transparent);
+	}
+
+	// Always reachable by keyboard, and on touch there is no hover to reveal it.
+	&:focus-visible {
+		opacity: 1;
+	}
+
+	.group:hover & {
+		opacity: 1;
+	}
+
+	@media (hover: none) {
+		opacity: 1;
+	}
+}
+
+@keyframes streaming-caret {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes ai-avatar-spin {
+	to {
+		transform: rotate(1turn);
+	}
+}
+
+@keyframes ai-avatar-pulse {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes ai-avatar-breathe {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.06);
+	}
+}
+
+@keyframes thinking-shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+@keyframes thinking-wave {
+	0%,
+	60%,
+	100% {
+		transform: translateY(0) scale(1);
+		opacity: 0.35;
+	}
+	30% {
+		transform: translateY(-0.28rem) scale(1.15);
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ai-avatar--thinking,
+	.ai-avatar--thinking::before,
+	.thinking-bubble,
+	.thinking-dot {
+		animation: none;
+	}
+
+	.thinking-dot {
+		opacity: 0.7;
+	}
+
+	:host ::ng-deep .md-content--streaming > :last-child::after {
+		animation: none;
+	}
+}

@@ -5,7 +5,8 @@ export const environment: AppEnvironment = {
 	baseUrl: 'http://localhost:4200',
 	apiBaseUrl: 'http://localhost:3000/api',
 	authBaseUrl: 'http://localhost:3000/auth',
-	appName: 'Angular 21 App (Dev)',
+	appName: 'Angular LT App (Dev)',
 	defaultLanguage: 'en',
 	enableDebugTools: true,
+	geminiApiKey: '',
 };

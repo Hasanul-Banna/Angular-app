@@ -1,14 +1,12 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import {
-  type ThemePreference,
-  ThemeService,
-} from '../../../core/services/theme.service';
+import { type ThemePreference, ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-theme-switcher',
   imports: [TranslatePipe],
   templateUrl: './theme-switcher.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './theme-switcher.scss',
 })
 export class ThemeSwitcher {
